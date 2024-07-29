@@ -10,8 +10,8 @@ class RequestAdmin(admin.ModelAdmin):
 
 @admin.register(GetRequest)
 class RequestAdmin(admin.ModelAdmin):
-    list_display = ('id', 'request', 'getrequest_type', 'where', 'whereTo')
-    search_fields = ('request', 'where', 'whereTo')
+    list_display = ('id', 'request', 'getrequest_type')
+    search_fields = ('request', 'user')
 
 
 @admin.register(BalansYechish)

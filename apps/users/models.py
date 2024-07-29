@@ -8,8 +8,9 @@ class UserProfile(models.Model):
     phone_number = models.CharField(max_length=15)
     passport_photo = models.ImageField(upload_to='passport_photo/')
     prava_photo = models.ImageField(upload_to='prava_photo/')
-    balance = models.PositiveIntegerField(default=0, null=True, blank=True)
+    balance = models.PositiveIntegerField(default=50000, null=True, blank=True)
     is_active = models.BooleanField(default=False)
+    telegram_id = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"

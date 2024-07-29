@@ -4,7 +4,7 @@ from core.models import BaseModel
 
 
 class Request(BaseModel):
-    user = models.ForeignKey(UserProfile, models.CASCADE)
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     REQUEST_TYPE_CHOICES = [
         ('yolovchi_berish', 'Yolovchi berish'),
         ('pochta_berish', 'Pochta berish'),
@@ -45,27 +45,20 @@ class Request(BaseModel):
     is_active = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.where} - {self.whereTo}"
+        return f"{self.where} - {self.whereTo}-{self.request_type}"
 
 
 class GetRequest(BaseModel):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     request = models.ForeignKey(Request, models.CASCADE)
     GETREQUEST_TYPE_CHOICES = [
         ('yolovchi_olish', 'Yolovchi olish'),
         ('pochta_olish', 'Pochta olish'),
     ]
     getrequest_type = models.CharField(max_length=50, choices=GETREQUEST_TYPE_CHOICES, default='yolovchi_olish')
-    WHERE_TYPE_CHOICES = [
-        ('toshkent', 'Toshkent'),
-        ("bog'dod-rishton-buvayda", "Bog'dod-Rishton-Buvayda"),
-        ("qo'qon", "Qo'qon"),
-        ("uchko'prik", "Uchko'prik"),
-    ]
-    where = models.CharField(max_length=100, choices=WHERE_TYPE_CHOICES, default='toshkent')
-    whereTo = models.CharField(max_length=100, choices=WHERE_TYPE_CHOICES, default='toshkent')
 
     def __str__(self):
-        return f"{self.where} - {self.whereTo}"
+        return f"{self.user} - {self.getrequest_type}"
 
 
 class BalansToldirish(BaseModel):

@@ -4,6 +4,9 @@ from .serializers import RequestSerializer, GetRequestSerializer, BalansYechishS
 from rest_framework import generics
 from .permissions import IsActiveUser
 from rest_framework.response import Response
+from rest_framework import serializers
+from apps.users.models import UserProfile
+from django.db import transaction
 
 
 class RequestViewSet(viewsets.ModelViewSet):
@@ -26,6 +29,25 @@ class GetRequestViewSet(viewsets.ModelViewSet):
         if request_id:
             queryset = queryset.filter(request_id=request_id)
         return queryset
+
+    @transaction.atomic
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user_profile = request.user.userprofile  # Assuming the authenticated user has a related UserProfile
+        getrequest_type = serializer.validated_data['getrequest_type']
+        deduction_amount = 0
+        if getrequest_type == 'yolovchi_olish':
+            deduction_amount = 7500
+        elif getrequest_type == 'pochta_olish':
+            deduction_amount = 5000
+        if user_profile.balance < deduction_amount:
+            return Response({"error": "Insufficient balance"}, status=status.HTTP_400_BAD_REQUEST)
+        user_profile.balance -= deduction_amount
+        user_profile.save()
+        serializer.save(user=user_profile)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class ActiveRequestSearchView(generics.ListAPIView):

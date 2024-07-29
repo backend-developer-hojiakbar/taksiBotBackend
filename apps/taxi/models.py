@@ -54,11 +54,7 @@ class GetRequest(BaseModel):
         ('yolovchi_olish', 'Yolovchi olish'),
         ('pochta_olish', 'Pochta olish'),
     ]
-    getrequest_type = models.CharField(
-        max_length=50,
-        choices=GETREQUEST_TYPE_CHOICES,
-        default='yolovchi_olish',
-    )
+    getrequest_type = models.CharField(max_length=50, choices=GETREQUEST_TYPE_CHOICES, default='yolovchi_olish')
     WHERE_TYPE_CHOICES = [
         ('toshkent', 'Toshkent'),
         ("bog'dod-rishton-buvayda", "Bog'dod-Rishton-Buvayda"),
@@ -66,11 +62,7 @@ class GetRequest(BaseModel):
         ("uchko'prik", "Uchko'prik"),
     ]
     where = models.CharField(max_length=100, choices=WHERE_TYPE_CHOICES, default='toshkent')
-    whereTo = models.CharField(
-        max_length=100,
-        choices=WHERE_TYPE_CHOICES,
-        default='toshkent',
-    )
+    whereTo = models.CharField(max_length=100, choices=WHERE_TYPE_CHOICES, default='toshkent')
 
     def __str__(self):
         return f"{self.where} - {self.whereTo}"

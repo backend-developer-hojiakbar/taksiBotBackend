@@ -58,6 +58,9 @@ CORS_ALLOW_HEADERS = [
     'authorization',
     # other headers if needed
 ]
+# settings.py
+
+AUTH_USER_MODEL = 'users.UserProfile'
 
 ROOT_URLCONF = 'bot.urls'
 

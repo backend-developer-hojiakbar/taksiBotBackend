@@ -6,6 +6,7 @@ class RequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = Request
         fields = ['id', 'user', 'request_type', 'where', 'whereTo', 'phone_number', 'is_active']
+        read_only_fields = ('user',)
 
 
 class GetRequestSerializer(serializers.ModelSerializer):
@@ -13,6 +14,7 @@ class GetRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = GetRequest
         fields = ['id', 'request', 'getrequest_type']
+        read_only_fields = ('user',)
 
 
 class BalansToldirishSerializer(serializers.ModelSerializer):

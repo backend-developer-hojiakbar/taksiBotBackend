@@ -1,47 +1,26 @@
-from rest_framework import viewsets, status
-from rest_framework import viewsets
-from rest_framework.decorators import action, api_view, permission_classes
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from django.views.decorators.csrf import csrf_exempt
+from rest_framework import generics
 from .models import UserProfile
-from .serializers import UserProfileSerializer
+from .serializers import UserProfileSerializer, LoginSerializer
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from django.contrib.auth import authenticate, login
 
 
-class UserProfileViewSet(viewsets.ModelViewSet):
+class UserRegisterView(generics.CreateAPIView):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
 
-    @action(detail=True, methods=['post'])
-    def activate(self, request, pk=None):
-        profile = self.get_object()
-        profile.is_active = True
-        profile.save()
-        return Response({'status': 'profile activated'}, status=status.HTTP_200_OK)
 
-
-@csrf_exempt
-@api_view(['POST'])
-def create_user_profile(request):
-    if request.method == 'POST':
-        data = request.data
-        telegram_id = request.data.get('telegram_id')
-        if telegram_id:
-            data['telegram_id'] = telegram_id
-        serializer = UserProfileSerializer(data=data)
+class LoginView(APIView):
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            phone_number = serializer.validated_data['phone_number']
+            password = serializer.validated_data['password']
+            user = authenticate(request, username=phone_number, password=password)
+            if user is not None:
+                login(request, user)
+                return Response({'message': 'Login successful'}, status=status.HTTP_200_OK)
+            return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(['GET'])
-def check_active(request):
-    phone_number = request.query_params.get('phone_number')
-    if not phone_number:
-        return Response({'error': 'Phone number is required'}, status=status.HTTP_400_BAD_REQUEST)
-    try:
-        profile = UserProfile.objects.get(phone_number=phone_number)
-        return Response({'is_active': profile.is_active}, status=status.HTTP_200_OK)
-    except UserProfile.DoesNotExist:
-        return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)

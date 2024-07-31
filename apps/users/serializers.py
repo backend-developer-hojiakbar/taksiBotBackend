@@ -5,8 +5,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = ['phone_number', 'first_name', 'last_name', 'passport_photo', 'prava_photo', 'balance', 'password']
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = ['id', 'phone_number', 'first_name', 'last_name', 'passport_photo', 'prava_photo', 'balance', 'is_active']
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)

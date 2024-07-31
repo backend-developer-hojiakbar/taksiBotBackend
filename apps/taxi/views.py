@@ -2,11 +2,9 @@ from rest_framework import viewsets, permissions, status
 from .models import Request, GetRequest, BalansYechish, BalansToldirish
 from .serializers import RequestSerializer, GetRequestSerializer, BalansYechishSerializer, BalansToldirishSerializer
 from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 from .permissions import IsActiveUser
 from rest_framework.response import Response
-from rest_framework import serializers
-from apps.users.models import UserProfile
-from django.db import transaction
 
 
 class RequestViewSet(viewsets.ModelViewSet):
@@ -22,18 +20,11 @@ class RequestViewSet(viewsets.ModelViewSet):
 class GetRequestViewSet(viewsets.ModelViewSet):
     queryset = GetRequest.objects.all()
     serializer_class = GetRequestSerializer
-    permission_classes = [IsActiveUser]
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        user_profile = self.request.user.userprofile  # Assuming `userprofile` is linked to your authentication system
-        serializer.save(user=user_profile)
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        request_id = self.request.query_params.get('request_id')
-        if request_id:
-            queryset = queryset.filter(request_id=request_id)
-        return queryset
+        # Directly use self.request.user, assuming it's an instance of UserProfile
+        serializer.save(user=self.request.user)
 
 
 class ActiveRequestSearchView(generics.ListAPIView):

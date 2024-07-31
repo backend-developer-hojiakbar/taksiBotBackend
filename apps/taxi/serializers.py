@@ -10,11 +10,12 @@ class RequestSerializer(serializers.ModelSerializer):
 
 
 class GetRequestSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = GetRequest
-        fields = ['id', 'request', 'getrequest_type']
-        read_only_fields = ('user',)
+        fields = '__all__'
+        extra_kwargs = {
+            'user': {'read_only': True}
+        }
 
 
 class BalansToldirishSerializer(serializers.ModelSerializer):

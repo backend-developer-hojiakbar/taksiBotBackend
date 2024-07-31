@@ -10,5 +10,5 @@ router.register(r'remove_balance', BalansYechishViewSet, basename='remove_balanc
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('search/', ActiveRequestSearchView.as_view(), name='request-search'),
+    path('search/', ActiveRequestSearchView.as_view(), name='request-search')
 ]
